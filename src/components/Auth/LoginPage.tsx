@@ -48,8 +48,9 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // e: React.FormEvent
+  const handleForgotPassword = async () => {
+    // e.preventDefault();
     if (!resetEmail) {
       setError('Please enter your email address.');
       return;
@@ -66,8 +67,9 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // e: React.FormEvent
+  const handleSubmit = async () => {
+    // e.preventDefault();
     setError('');
 
     const { email, password, name } = formData;
