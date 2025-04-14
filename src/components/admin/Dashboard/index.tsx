@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import StatsGrid from './StatsGrid';
 import RecentPatients from './RecentPatients';
 import DoctorSchedule from './DoctorSchedule';
-import logo from '../../Image/MEDICARE.png';
+import logo from '../../../Image/MEDICARE.png';
 
 const Dashboard = () => {
   const containerVariants = {
