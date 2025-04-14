@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { Mail, Lock, AlertCircle, IdCard } from 'lucide-react';
-import logo from '../../Image/MEDICARE.png'
+import logo from '../../Image/MEDICARE.png';
 
 interface LoginFormData {
   name: string;

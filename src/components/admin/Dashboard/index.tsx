@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import StatsGrid from './StatsGrid';
 import RecentPatients from './RecentPatients';
 import DoctorSchedule from './DoctorSchedule';
+import logo from '../../Image/MEDICARE.png';
 
 const Dashboard = () => {
   const containerVariants = {
@@ -41,7 +42,8 @@ const Dashboard = () => {
           <div className="bg-gradient-to-r from-emerald-500 to-emerald-900 p-3 rounded-2xl">
             <img
               alt=""
-              src="src/image/MEDICARE.png"
+              // src="src/image/MEDICARE.png"
+              src={logo}
               width="60"
               className="bg-white p-2 rounded-lg"
             />

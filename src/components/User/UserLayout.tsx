@@ -12,6 +12,7 @@ import {
   Menu,
   X,
 } from 'lucide-react';
+import logo from '../../Image/MEDICARE.png';
 
 const UserLayout: React.FC = () => {
   const location = useLocation();
@@ -74,7 +75,8 @@ const UserLayout: React.FC = () => {
             >
               <Link to="/user" className="flex items-center">
                 <img
-                  src="src/image/MEDICARE.png"
+                  // src="src/image/MEDICARE.png"
+                  src={logo}
                   alt=""
                   className="h-8 w-auto"
                 />
