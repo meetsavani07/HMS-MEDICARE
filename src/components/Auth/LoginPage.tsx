@@ -181,7 +181,7 @@ const LoginPage: React.FC = () => {
         <div className="flex justify-center">
           <motion.img
             alt="Logo"
-            src="/src/image/MEDICARE.png"
+            src="src/image/MEDICARE.png"
             width="80"
             className="sm:w-[100px]"
             whileHover={{ scale: 1.1 }}

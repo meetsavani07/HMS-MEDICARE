@@ -74,7 +74,7 @@ const UserLayout: React.FC = () => {
             >
               <Link to="/user" className="flex items-center">
                 <img
-                  src="/src/image/MEDICARE.png"
+                  src="src/image/MEDICARE.png"
                   alt="MADICARE"
                   className="h-8 w-auto"
                 />
