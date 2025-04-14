@@ -40,7 +40,7 @@ const Dashboard = () => {
         <div className="flex items-center gap-4">
           <div className="bg-gradient-to-r from-emerald-500 to-emerald-900 p-3 rounded-2xl">
             <img
-              alt="Logo"
+              alt=""
               src="src/image/MEDICARE.png"
               width="60"
               className="bg-white p-2 rounded-lg"

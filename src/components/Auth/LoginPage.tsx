@@ -180,7 +180,7 @@ const LoginPage: React.FC = () => {
       >
         <div className="flex justify-center">
           <motion.img
-            alt="Logo"
+            alt=""
             src="src/image/MEDICARE.png"
             width="80"
             className="sm:w-[100px]"

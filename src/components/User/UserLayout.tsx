@@ -75,7 +75,7 @@ const UserLayout: React.FC = () => {
               <Link to="/user" className="flex items-center">
                 <img
                   src="src/image/MEDICARE.png"
-                  alt="MADICARE"
+                  alt=""
                   className="h-8 w-auto"
                 />
                 <span className="ml-2 text-xl font-bold bg-gradient-to-br from-emerald-800 to-emerald-500 bg-clip-text text-transparent">
