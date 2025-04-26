@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { Mail, Lock, AlertCircle, IdCard } from 'lucide-react';
+import logo from '../../Image/MEDICARE.png'
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -176,7 +177,7 @@ const LoginPage: React.FC = () => {
         <div className="flex justify-center">
           <motion.img
             alt="Logo"
-            src="/src/image/MEDICARE.png"
+            src={logo}
             width="80"
             className="sm:w-[100px]"
             whileHover={{ scale: 1.1 }}
