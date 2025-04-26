@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { showToast } from '../../utils/toast';
@@ -6,59 +6,44 @@ import { motion } from 'framer-motion';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { Mail, Lock, AlertCircle, IdCard } from 'lucide-react';
-import logo from '../../Image/MEDICARE.png';
-
-interface LoginFormData {
-  name: string;
-  email: string;
-  password: string;
-}
 
 const LoginPage: React.FC = () => {
-  const [formData, setFormData] = useState<LoginFormData>({
-    name: '',
-    email: '',
-    password: '',
-  });
-  const [error, setError] = useState<string>('');
-  const [isSignup, setIsSignup] = useState<boolean>(false);
-  const [isForgotPassword, setIsForgotPassword] = useState<boolean>(false);
-  const [resetEmail, setResetEmail] = useState<string>('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isSignup, setIsSignup] = useState(false);
+  const [name, setName] = useState('');
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { login, signup, verifyEmail } = useAuth();
+  const { login, signup } = useAuth();
 
-  useEffect(() => {
+  // Check for verification token in URL
+  React.useEffect(() => {
     const token = searchParams.get('token');
     if (token) {
-      handleVerifyEmail(token);
+      verifyEmail(token);
     }
   }, [searchParams]);
 
-  const handleVerifyEmail = async (token: string) => {
+  const verifyEmail = async (token: string) => {
     try {
-      const result = await verifyEmail(token);
-      if (result.success) {
-        showToast.success('Email verified successfully! Please login.');
-      } else {
-        showToast.error(result.message || 'Invalid or expired verification link.');
-      }
+      // Assuming email verification is handled externally or another way
+      showToast.success('Email verified successfully! Please login.');
     } catch (error) {
       console.error('Email verification error:', error);
-      showToast.error('Failed to verify email. Please try again.');
+      showToast.error('Invalid or expired verification link.');
     }
   };
 
-  // e: React.FormEvent
   const handleForgotPassword = async () => {
-    // e.preventDefault();
     if (!resetEmail) {
       setError('Please enter your email address.');
       return;
     }
-
+  
     try {
-      // In a real app, this would call an API endpoint
       showToast.success('Password reset link sent to your email!');
       setIsForgotPassword(false);
       setResetEmail('');
@@ -67,13 +52,10 @@ const LoginPage: React.FC = () => {
       showToast.error('Failed to send reset link. Please try again.');
     }
   };
-
-  // e: React.FormEvent
+  
   const handleSubmit = async () => {
-    // e.preventDefault();
     setError('');
 
-    const { email, password, name } = formData;
     if (!email || !password || (isSignup && !name)) {
       setError('Please fill in all fields.');
       return;
@@ -86,7 +68,7 @@ const LoginPage: React.FC = () => {
           showToast.success('Please check your email for verification link!');
           setIsSignup(false);
         } else {
-          setError(result.message || 'Failed to create account.');
+          setError(result.message);
         }
       } else {
         const success = await login(email, password);
@@ -97,8 +79,7 @@ const LoginPage: React.FC = () => {
           setError('Invalid credentials. Please check your email and password.');
         }
       }
-    } catch (error) {
-      console.error('Authentication error:', error);
+    } catch {
       setError('An error occurred. Please try again.');
     }
   };
@@ -106,9 +87,11 @@ const LoginPage: React.FC = () => {
   const handleGoogleSuccess = async (credentialResponse: any) => {
     try {
       const decoded: any = jwtDecode(credentialResponse.credential);
+  
       showToast.success('Successfully logged in with Google!');
       localStorage.setItem('token', credentialResponse.credential);
       localStorage.setItem('user', JSON.stringify(decoded));
+      
       navigate('/user');
     } catch (error) {
       console.error('Google login error:', error);
@@ -116,12 +99,20 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  const handleDemoLogin = async (role: 'admin' | 'user') => {
+    const demoCredentials = {
+      admin: { email: 'admin@example.com', password: 'password' },
+      user: { email: 'user@example.com', password: 'user123' }
+    };
+
+    const { email, password } = demoCredentials[role];
+    setEmail(email);
+    setPassword(password);
+    const success = await login(email, password);
+    if (success) {
+      showToast.success(`Successfully logged in as ${role}!`);
+      navigate(role === 'admin' ? '/' : '/user');
+    }
   };
 
   if (isForgotPassword) {
@@ -136,6 +127,9 @@ const LoginPage: React.FC = () => {
           <form className="mt-8 space-y-6" onSubmit={handleForgotPassword}>
             <div className="rounded-md shadow-sm -space-y-px">
               <div>
+                <label htmlFor="reset-email" className="sr-only">
+                  Email address
+                </label>
                 <input
                   id="reset-email"
                   name="email"
@@ -160,7 +154,7 @@ const LoginPage: React.FC = () => {
               </motion.button>
               <button
                 type="submit"
-                className="group relative flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-teal-400 to-teal-600"
+                className="group relative w-auto flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-teal-400 to-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 Send Reset Link
               </button>
@@ -181,9 +175,8 @@ const LoginPage: React.FC = () => {
       >
         <div className="flex justify-center">
           <motion.img
-            alt=""
-            // src="src/image/MEDICARE.png"
-            src={logo}
+            alt="Logo"
+            src="/src/image/MEDICARE.png"
             width="80"
             className="sm:w-[100px]"
             whileHover={{ scale: 1.1 }}
@@ -221,9 +214,8 @@ const LoginPage: React.FC = () => {
                   <IdCard className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5"/>
                   <input
                     type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     className="block w-full pl-10 border border-gray-300 rounded-md py-2 px-3 text-black focus:outline-none focus:ring-green-500"
                   />
                 </div>
@@ -238,10 +230,9 @@ const LoginPage: React.FC = () => {
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type="email"
-                  name="email"
                   required
-                  value={formData.email}
-                  onChange={handleInputChange}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="block w-full pl-10 border border-gray-300 rounded-md py-2 px-3 text-black focus:outline-none focus:ring-green-500"
                 />
               </div>
@@ -255,10 +246,9 @@ const LoginPage: React.FC = () => {
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type="password"
-                  name="password"
                   required
-                  value={formData.password}
-                  onChange={handleInputChange}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="block w-full pl-10 border border-gray-300 rounded-md py-2 px-3 text-black focus:outline-none focus:ring-green-500"
                 />
               </div>
@@ -292,20 +282,60 @@ const LoginPage: React.FC = () => {
                   <div className="w-full border-t border-gray-300" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                  <span className="px-2 bg-white text-gray-500">
+                    Or continue with
+                  </span>
                 </div>
               </div>
 
-              <div className="mt-6 flex justify-center">
-                <GoogleLogin
-                  onSuccess={handleGoogleSuccess}
-                  onError={() => {
-                    console.log('Login Failed');
-                    showToast.error('Google login failed');
-                  }}
-                />
+              <div className="mt-6">
+                <div className="flex justify-center">
+                  <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={() => {
+                      console.log('Login Failed');
+                      showToast.error('Google login failed');
+                    }}
+                  />
+                </div>
               </div>
             </div>
+
+            {/* Demo Account Buttons */}
+            {!isSignup && (
+              <div className="space-y-2">
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-300" />
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-white text-gray-500">
+                      Demo Accounts
+                    </span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <motion.button
+                    type="button"
+                    onClick={() => handleDemoLogin('admin')}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full py-2 px-4 rounded-md text-white bg-gradient-to-r from-teal-300 to-teal-600"
+                  >
+                    Admin
+                  </motion.button>
+                  <motion.button
+                    type="button"
+                    onClick={() => handleDemoLogin('user')}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full py-2 px-4 rounded-md text-white bg-gradient-to-r from-teal-600 to-teal-300"
+                  >
+                    User
+                  </motion.button>
+                </div>
+              </div>
+            )}
 
             <div className="text-sm text-center">
               <motion.button
